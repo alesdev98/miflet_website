@@ -1,19 +1,41 @@
+# fly.toml per mifletwebsite.it
 app = "miflet-website"
+primary_region = "fra"  # Francoforte, vicino all'Italia
 
-kill_signal = "SIGINT"
-kill_timeout = 5
-processes = []
+[build]
 
 [env]
-  FLET_SESSION_TIMEOUT = "60"
+# Porta interna della tua app Flet
+PORT = "8000"
+
+[experimental]
+# Consente di usare HTTPS automatico
+auto_https = true
 
 [http_service]
   internal_port = 8000
   force_https = true
-  auto_stop_machines = "stop"
+  # Per la scalabilità automatica
+  auto_stop_machines = true
   auto_start_machines = true
   min_machines_running = 0
-  [http_service.concurrency]
-    type = "requests"
-    soft_limit = 200
-    hard_limit = 250
+  processes = ["app"]
+
+[services]
+  [[services.http]]
+    internal_port = 8000
+    protocol = "tcp"
+
+    [[services.http.concurrency]]
+      type = "connections"
+      hard_limit = 1000
+      soft_limit = 750
+
+    [[services.http.tls]]
+      # Fly rileva automaticamente il certificato SSL se il DNS punta correttamente
+      cert_file = ""
+      key_file = ""
+
+  [[services.tcp]]
+    # opzionale: per WebSocket avanzati o altre porte TCP
+    internal_port = 8080

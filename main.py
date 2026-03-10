@@ -14,7 +14,9 @@ def main(page: ft.Page):
 
     page.add(
         ft.Button("Call handler", on_click=handler),
-        ft.Button("Call async handler", on_click=handler_async)
+        ft.Button("Call async handler", on_click=handler_async),
+
+        ft.Text("Hello, World!")
     )
 
 ft.run(main)
