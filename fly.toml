@@ -1,23 +1,19 @@
-# fly.toml app configuration file generated for miflet-website on 2026-03-10T10:20:45Z
-#
-# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
-#
+app = "miflet-website"
 
-app = 'miflet-website'
-primary_region = 'ams'
+kill_signal = "SIGINT"
+kill_timeout = 5
+processes = []
 
-[build]
+[env]
+  FLET_SESSION_TIMEOUT = "60"
 
 [http_service]
-  internal_port = 8080
+  internal_port = 8000
   force_https = true
-  auto_stop_machines = 'stop'
+  auto_stop_machines = "stop"
   auto_start_machines = true
   min_machines_running = 0
-  processes = ['app']
-
-[[vm]]
-  memory = '1gb'
-  cpu_kind = 'shared'
-  cpus = 1
-  memory_mb = 256
+  [http_service.concurrency]
+    type = "requests"
+    soft_limit = 200
+    hard_limit = 250
