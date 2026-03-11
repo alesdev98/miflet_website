@@ -1,22 +1,51 @@
 import flet as ft
-import time
-import asyncio
 
-def main(page: ft.Page):
+from app.media.responsive import MediaQuery
 
-    def handler(e):
-        time.sleep(3)
-        page.add(ft.Text("Handler clicked"))
+from app.elements.header import Header
+from app.elements.content import Content
 
-    async def handler_async(e):
-        await asyncio.sleep(3)
-        page.add(ft.Text("Async handler clicked"))
+async def main(page: ft.Page):
+    # CALLBACKS
+    def theme_mode_toggle():
+        page.theme_mode = ft.ThemeMode.LIGHT if page.theme_mode == ft.ThemeMode.DARK else ft.ThemeMode.DARK
+        page.update()
 
-    page.add(
-        ft.Button("Call handler", on_click=handler),
-        ft.Button("Call async handler", on_click=handler_async),
+    def on_menu_select(page_name: str):
+        content.set_content(page_name)
 
-        ft.Text("Hello, World!")
+    # Recupera il token salvato
+    try:
+        session_token = await ft.SharedPreferences().get(key="session_token")
+        # if not(session_token and user_active_session(session_token)):
+        if not(session_token):
+            print("Nessun token di sessione valido trovato.")
+            await ft.SharedPreferences().remove(key="session_token")
+    except Exception as e:
+        print(f"Errore nel recupero del token di sessione: {e}")
+        await ft.SharedPreferences().remove(key="session_token")
+
+    media = MediaQuery(page)
+    media.register("mobile", min_width=0, max_width=600)
+    media.register("default", min_width=601, max_width=2000)
+    
+    page.padding = 0
+    page.theme_mode = ft.ThemeMode.DARK
+
+    # ELEMENTS INIT
+    header = Header(
+        media=media,
+        toggle_theme_mode=theme_mode_toggle,
+        on_menu_select=on_menu_select
     )
+    content = Content()
 
-ft.run(main)
+    # PAGE
+    page.add(header)
+    page.add(content)
+
+ft.run(
+    main=main,
+    assets_dir="assets",
+    port=8000
+)
