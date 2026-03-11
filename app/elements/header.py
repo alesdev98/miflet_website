@@ -20,26 +20,27 @@ class Header(ft.Container):
         self.toggle_theme_mode = toggle_theme_mode  # callback per il toggle tema
         self.on_menu_select = on_menu_select  # callback per comunicare col Content
 
+        self.title = ft.Text("Studio legale Repetto e DeBianchi", weight=ft.FontWeight.BOLD, animate_size=200)
+
         self.menu_inline = ft.Row(
-            animate_opacity=300,
             visible=True,
             controls=[
-                ft.TextButton("Home", on_click=lambda _: self.menu_item_clicked("Home")),
-                ft.TextButton("Chi Siamo", on_click=lambda _: self.menu_item_clicked("Chi Siamo")),
-                ft.TextButton("Contatti", on_click=lambda _: self.menu_item_clicked("Contatti"))
+                ft.TextButton("Home", style=ft.ButtonStyle(color=default.COLOR_2) ,on_click=lambda _: self.menu_item_clicked("Home")),
+                ft.TextButton("Chi Siamo", style=ft.ButtonStyle(color=default.COLOR_2) ,on_click=lambda _: self.menu_item_clicked("Chi Siamo")),
+                ft.TextButton("Contatti", style=ft.ButtonStyle(color=default.COLOR_2) ,on_click=lambda _: self.menu_item_clicked("Contatti"))
             ]
         )
 
-        self.menu_dropdown = ft.Dropdown(
-            animate_opacity=300,
-            on_select=lambda e: self.menu_item_clicked(e.control.value),
+        self.menu_dropdown = ft.PopupMenuButton(
             visible=False,
-            color=default.COLOR_2,
-            options=[
-                ft.dropdown.Option("Home"),
-                ft.dropdown.Option("Chi Siamo"),
-                ft.dropdown.Option("Contatti")
-            ]
+            popup_animation_style=ft.AnimationStyle(duration=300, curve=ft.AnimationCurve.EASE_OUT),
+            animate_opacity=300,
+            items=[
+                ft.PopupMenuItem("Home"),
+                ft.PopupMenuItem("Chi Siamo"),
+                ft.PopupMenuItem("Contatti"),
+            ],
+            on_select=lambda e: self.menu_item_clicked(str(e.control.value).lower())
         )
 
         # Elements
@@ -49,8 +50,9 @@ class Header(ft.Container):
             content=ft.Row(
                 height=80,
                 alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
                 controls=[
-                    ft.Text("Studio legale Repetto e DeBianchi", weight=ft.FontWeight.BOLD, animate_size=200),
+                    self.title,
                     self.menu_inline,
                     self.menu_dropdown
                 ]
@@ -94,12 +96,10 @@ class Header(ft.Container):
         # properties specifiche per mobile
         self.menu_inline.visible = False
         self.menu_dropdown.visible = True
-
+        
         # EFFECTS
-        self.header.content.controls[0].size = default.TEXT_MEDIUM_SIZE
-        self.header.height = 70
-        self.menu_inline.opacity = 0
-        self.menu_dropdown.opacity = 1
+        self.title.size = default.TEXT_MEDIUM_SIZE
+        self.header.content.height = 70
 
         self.update()
 
@@ -111,10 +111,8 @@ class Header(ft.Container):
         self.menu_dropdown.visible = False
 
         # EFFECTS
-        self.header.content.controls[0].size = default.TEXT_LARGE_SIZE
-        self.header.height = 80
-        self.menu_inline.opacity = 1
-        self.menu_dropdown.opacity = 0
+        self.title.size = default.TEXT_LARGE_SIZE
+        self.header.content.height = 80
 
         self.update()
     
