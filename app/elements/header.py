@@ -20,15 +20,29 @@ class Header(ft.Container):
         self.toggle_theme_mode = toggle_theme_mode  # callback per il toggle tema
         self.on_menu_select = on_menu_select  # callback per comunicare col Content
 
-        self.title = ft.Text("Studio legale Repetto e DeBianchi", weight=ft.FontWeight.BOLD, animate_size=200)
+        # Elementi UI
+        LINKS = ["Home", "Chi Siamo", "Aree di Attività", "Contatti"]
 
+        self.title = ft.Text("Studio legale Repetto e DeBianchi", size=default.TEXT_XXL_SIZE, weight=ft.FontWeight.BOLD, animate_size=200)
+
+        self.icon = ft.Image(src=f"{img_path}/logo.png", color=default.COLOR_2, visible=False)
+
+        self.theme_toggle = ft.IconButton(
+            icon=ft.Icons.DARK_MODE,
+            on_click=lambda _: self.toggle_theme_mode()
+        )
+
+        # MENU
         self.menu_inline = ft.Row(
             visible=True,
+            scroll=ft.ScrollMode.AUTO,
             controls=[
-                ft.TextButton("Home", style=ft.ButtonStyle(color=default.COLOR_2) ,on_click=lambda _: self.menu_item_clicked("Home")),
-                ft.TextButton("Chi Siamo", style=ft.ButtonStyle(color=default.COLOR_2) ,on_click=lambda _: self.menu_item_clicked("Chi Siamo")),
-                ft.TextButton("Contatti", style=ft.ButtonStyle(color=default.COLOR_2) ,on_click=lambda _: self.menu_item_clicked("Contatti"))
-            ]
+                ft.TextButton(
+                    str(link), 
+                    style=ft.ButtonStyle(text_style=ft.TextStyle(size=default.TEXT_L_SIZE, color=default.COLOR_2)),
+                    on_click=lambda _: self.menu_item_clicked(str(link).lower())
+                ) for link in LINKS
+            ] 
         )
 
         self.menu_dropdown = ft.PopupMenuButton(
@@ -36,11 +50,9 @@ class Header(ft.Container):
             popup_animation_style=ft.AnimationStyle(duration=300, curve=ft.AnimationCurve.EASE_OUT),
             animate_opacity=300,
             items=[
-                ft.PopupMenuItem("Home"),
-                ft.PopupMenuItem("Chi Siamo"),
-                ft.PopupMenuItem("Contatti"),
-            ],
-            on_select=lambda e: self.menu_item_clicked(str(e.control.value).lower())
+                ft.PopupMenuItem(f"{link}", on_click=lambda _, l=link: self.menu_item_clicked(l.lower()))
+                for link in LINKS
+            ]
         )
 
         # Elements
@@ -53,7 +65,9 @@ class Header(ft.Container):
                 vertical_alignment=ft.CrossAxisAlignment.CENTER,
                 controls=[
                     self.title,
+                    self.icon,
                     self.menu_inline,
+                    self.theme_toggle,
                     self.menu_dropdown
                 ]
             )
@@ -85,8 +99,13 @@ class Header(ft.Container):
             self.update()
         self.page.run_task(load_session)
 
-        self.media.on('mobile', self.set_mobile_view)
-        self.media.on('default', self.set_default_view)
+        if self.page.platform in (ft.PagePlatform.ANDROID, ft.PagePlatform.IOS):
+            self.set_mobile_view()
+        else:
+            self.media.on('mobile', self.set_mobile_view)
+            self.media.on('default', self.set_default_view)
+
+        self.theme_toggle.icon = ft.Icons.DARK_MODE if self.page.theme_mode == ft.ThemeMode.LIGHT else ft.Icons.LIGHT_MODE
 
         self.update()
 
@@ -98,7 +117,9 @@ class Header(ft.Container):
         self.menu_dropdown.visible = True
         
         # EFFECTS
-        self.title.size = default.TEXT_MEDIUM_SIZE
+        # self.title.size = default.TEXT_L_SIZE
+        self.title.visible = False
+        self.icon.visible = True
         self.header.content.height = 70
 
         self.update()
@@ -111,9 +132,15 @@ class Header(ft.Container):
         self.menu_dropdown.visible = False
 
         # EFFECTS
-        self.title.size = default.TEXT_LARGE_SIZE
+        self.title.size = default.TEXT_XXL_SIZE
+        self.title.visible = True
+        self.icon.visible = False
         self.header.content.height = 80
 
         self.update()
     
-    ## FUNCTIONS
+    ## MAIN CALLBACKS
+    def theme_toggle_icon(self, icon: ft.Icons):
+        self.theme_toggle.icon = icon
+        self.update()
+    

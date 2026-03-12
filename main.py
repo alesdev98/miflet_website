@@ -8,6 +8,8 @@ from app.elements.content import Content
 async def main(page: ft.Page):
     # CALLBACKS
     def theme_mode_toggle():
+        header.theme_toggle_icon(ft.Icons.DARK_MODE if page.theme_mode == ft.ThemeMode.LIGHT else ft.Icons.LIGHT_MODE)
+        
         page.theme_mode = ft.ThemeMode.LIGHT if page.theme_mode == ft.ThemeMode.DARK else ft.ThemeMode.DARK
         page.update()
 
