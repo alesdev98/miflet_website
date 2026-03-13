@@ -5,28 +5,33 @@ from app.backend.router import get_page
 
 class Content(ft.Container):
     def __init__(
-            self
+            self,
+            init_page: str = "home"
         ):
         super().__init__()
+        self.expand = True
+
+        self.init_page = init_page
 
         # Contenuto iniziale
-        self.current_control = ft.Text("🏠 Sei nella Home!", size=20)
+        self.current_control = None
 
         self.content = ft.Column(
             controls=[self.current_control],
             alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             expand=True,
+            scroll=ft.ScrollMode.AUTO
         )
 
         # Animazione fade
         self.animate_opacity = ft.Animation(400, ft.AnimationCurve.EASE_IN_OUT)
         self.opacity = 1
 
-        self.controls = [self.content]
+        self.controls = self.content
 
     def did_mount(self):
-        pass
+        self.set_content(self.init_page)
 
     def fade_out_in(self, new_control: ft.Control):
         """Esegue la dissolvenza e sostituisce il contenuto."""

@@ -23,9 +23,10 @@ class Header(ft.Container):
         # Elementi UI
         LINKS = ["Home", "Chi Siamo", "Aree di Attività", "Contatti"]
 
-        self.title = ft.Text("Studio legale Repetto e DeBianchi", size=default.TEXT_XXL_SIZE, weight=ft.FontWeight.BOLD, animate_size=200)
+        # self.title = ft.Text("Studio legale Repetto e DeBianchi", size=default.TEXT_XXL_SIZE, weight=ft.FontWeight.BOLD, animate_size=200)
 
-        self.icon = ft.Image(src=f"{img_path}/logo.png", color=default.COLOR_2, visible=False)
+        self.logo = ft.Image(src=f"{img_path}/logo_extend.png", color=default.COLOR_2, fit=ft.BoxFit.FIT_WIDTH, filter_quality=ft.FilterQuality.HIGH)
+        self.container_logo = ft.Container(self.logo, width=400, padding=0)
 
         self.theme_toggle = ft.IconButton(
             icon=ft.Icons.DARK_MODE,
@@ -46,6 +47,7 @@ class Header(ft.Container):
         )
 
         self.menu_dropdown = ft.PopupMenuButton(
+            icon=ft.Icons.MENU,
             visible=False,
             popup_animation_style=ft.AnimationStyle(duration=300, curve=ft.AnimationCurve.EASE_OUT),
             animate_opacity=300,
@@ -59,16 +61,23 @@ class Header(ft.Container):
         self.header = ft.Container(
             animate=ft.Animation(220, ft.AnimationCurve.EASE_OUT),
             bgcolor=default.COLOR_1,
+            padding=0,
             content=ft.Row(
-                height=80,
+                height=100,
                 alignment=ft.MainAxisAlignment.SPACE_AROUND,
                 vertical_alignment=ft.CrossAxisAlignment.CENTER,
                 controls=[
-                    self.title,
-                    self.icon,
+                    # self.title,
+                    self.container_logo,
                     self.menu_inline,
-                    self.theme_toggle,
-                    self.menu_dropdown
+                    ft.Row(
+                        alignment=ft.MainAxisAlignment.END,
+                        vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                        controls=[
+                            self.theme_toggle,
+                            self.menu_dropdown
+                        ]
+                    )
                 ]
             )
         )
@@ -117,10 +126,9 @@ class Header(ft.Container):
         self.menu_dropdown.visible = True
         
         # EFFECTS
-        # self.title.size = default.TEXT_L_SIZE
-        self.title.visible = False
-        self.icon.visible = True
+        self.logo.src = f"{img_path}/logo_compact.png"
         self.header.content.height = 70
+        self.container_logo.width = 100
 
         self.update()
 
@@ -132,10 +140,9 @@ class Header(ft.Container):
         self.menu_dropdown.visible = False
 
         # EFFECTS
-        self.title.size = default.TEXT_XXL_SIZE
-        self.title.visible = True
-        self.icon.visible = False
+        self.logo.src = f"{img_path}/logo_extend.png"
         self.header.content.height = 80
+        self.container_logo.width = 400
 
         self.update()
     

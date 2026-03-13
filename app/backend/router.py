@@ -1,6 +1,8 @@
 # backend/router.py
 import flet as ft
 
+from app.pages.home import *
+
 def get_page(page_name: str, on_user_change_token=None) -> ft.Control:
     """Restituisce un controllo Flet in base al nome della pagina."""
     page_name = page_name.lower()
@@ -8,7 +10,7 @@ def get_page(page_name: str, on_user_change_token=None) -> ft.Control:
 
     match page_name:
         case "home":
-            return ft.Text("🏠 Sei nella Home!", size=20)
+            return Home()
         case "about":
             return ft.Text("ℹ️ Informazioni su StampaCheTiPassa", size=20)
         case "contact":
